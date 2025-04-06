@@ -8,7 +8,6 @@ import Farmers from "./pages/Farmers";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import Quiz from "./pages/Quiz";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { CartProvider } from "./context/CartContext";
 import { ThemeProvider } from "./context/ThemeContext";
@@ -68,7 +67,6 @@ const AppRoutes = () => {
           <Farmers />
         </RoleBasedRoute>
       } />
-      <Route path="/quiz" element={<Quiz />} />
       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
       <Route path="*" element={<NotFound />} />
     </Routes>

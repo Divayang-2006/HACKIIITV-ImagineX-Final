@@ -76,13 +76,6 @@ const Navbar: React.FC = () => {
               </Link>
             )}
             
-            <Link 
-              to="/quiz" 
-              className={`${getThemeTextColor()} hover:text-theme-accent font-medium transition-all duration-300 hover:-translate-y-0.5 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-theme-accent after:transition-all after:duration-300 hover:after:w-full`}
-            >
-              Quiz
-            </Link>
-            
             <a 
               href="#" 
               className={`${getThemeTextColor()} hover:text-theme-accent font-medium transition-all duration-300 hover:-translate-y-0.5 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-theme-accent after:transition-all after:duration-300 hover:after:w-full`}

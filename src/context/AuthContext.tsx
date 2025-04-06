@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { auth } from '@/services/api';
+import { toast } from 'sonner';
 
 interface User {
   id: string;
@@ -26,15 +27,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Check for stored auth token on mount
     const token = localStorage.getItem('token');
     const storedUser = localStorage.getItem('user');
+    
     if (token && storedUser) {
-      setUser(JSON.parse(storedUser));
-      setIsAuthenticated(true);
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        console.log('Loaded user from storage:', parsedUser);
+        setUser(parsedUser);
+        setIsAuthenticated(true);
+      } catch (error) {
+        console.error('Error parsing stored user:', error);
+        // Clear invalid data
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+      }
     }
   }, []);
 
   const login = async (email: string, password: string, role: 'customer' | 'farmer') => {
     try {
+      console.log('Attempting login with:', { email, role });
       const response = await auth.login(email, password);
+      console.log('Login response:', response);
+      
+      if (!response.token || !response.user) {
+        throw new Error('Invalid response from server');
+      }
+      
       localStorage.setItem('token', response.token);
       localStorage.setItem('user', JSON.stringify(response.user));
       setUser(response.user);
@@ -47,7 +65,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signup = async (name: string, email: string, password: string, role: 'customer' | 'farmer') => {
     try {
+      console.log('Attempting signup with:', { name, email, role });
       const response = await auth.register(name, email, password, role);
+      console.log('Signup response:', response);
+      
+      if (!response.token || !response.user) {
+        throw new Error('Invalid response from server');
+      }
+      
       localStorage.setItem('token', response.token);
       localStorage.setItem('user', JSON.stringify(response.user));
       setUser(response.user);

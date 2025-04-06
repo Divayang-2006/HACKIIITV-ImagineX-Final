@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import CartItem from "@/components/CartItem";
 import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
-import { Gift } from 'lucide-react';
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -13,7 +12,7 @@ interface CartDrawerProps {
 
 const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
   const { user, isAuthenticated } = useAuth();
-  const { items: cartItems, updateQuantity, removeItem, clearCart, calculateTotal } = useCart();
+  const { items: cartItems, updateQuantity, removeItem, clearCart } = useCart();
 
   const handleCheckout = async () => {
     try {
@@ -26,12 +25,15 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
     }
   };
 
+  const calculateTotal = () => {
+    return cartItems.reduce((total, item) => {
+      return total + (item.product.price * item.quantity);
+    }, 0);
+  };
+
   if (!isAuthenticated || user?.role !== 'customer') {
     return null;
   }
-
-  const totals = calculateTotal();
-  const hasDiscount = totals.discount > 0;
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
@@ -57,26 +59,9 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
               ))}
 
               <div className="pt-4 border-t">
-                <div className="space-y-2 mb-4">
-                  <div className="flex justify-between text-base">
-                    <span>Subtotal</span>
-                    <span>₹{totals.subtotal.toFixed(0)}</span>
-                  </div>
-                  
-                  {hasDiscount && (
-                    <div className="flex justify-between text-base text-green-600">
-                      <span className="flex items-center">
-                        <Gift className="h-4 w-4 mr-1" />
-                        Quiz Discount
-                      </span>
-                      <span>-₹{totals.discount.toFixed(0)}</span>
-                    </div>
-                  )}
-                  
-                  <div className="flex justify-between text-lg font-semibold pt-2 border-t">
-                    <span>Total</span>
-                    <span>₹{totals.total.toFixed(0)}</span>
-                  </div>
+                <div className="flex justify-between text-lg font-semibold mb-4">
+                  <span>Total</span>
+                  <span>₹{calculateTotal().toFixed(0)}</span>
                 </div>
 
                 <div className="space-y-2">

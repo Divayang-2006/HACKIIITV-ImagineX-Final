@@ -18,14 +18,38 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Add response interceptor for debugging
+api.interceptors.response.use(
+  (response) => {
+    console.log('API Response:', response.config.url, response.status, response.data);
+    return response;
+  },
+  (error) => {
+    console.error('API Error:', error.config?.url, error.response?.status, error.response?.data);
+    return Promise.reject(error);
+  }
+);
+
 export const auth = {
   login: async (email: string, password: string) => {
-    const response = await api.post('/auth/login', { email, password });
-    return response.data;
+    try {
+      console.log('Sending login request:', { email });
+      const response = await api.post('/auth/login', { email, password });
+      return response.data;
+    } catch (error) {
+      console.error('Login API error:', error);
+      throw error;
+    }
   },
   register: async (name: string, email: string, password: string, role: 'farmer' | 'customer') => {
-    const response = await api.post('/auth/register', { name, email, password, role });
-    return response.data;
+    try {
+      console.log('Sending register request:', { name, email, role });
+      const response = await api.post('/auth/register', { name, email, password, role });
+      return response.data;
+    } catch (error) {
+      console.error('Register API error:', error);
+      throw error;
+    }
   },
 };
 

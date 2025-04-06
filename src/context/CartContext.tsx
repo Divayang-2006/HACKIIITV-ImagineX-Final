@@ -23,7 +23,6 @@ interface CartContextType {
   updateQuantity: (productId: string, quantity: number) => Promise<void>;
   removeItem: (productId: string) => Promise<void>;
   clearCart: () => Promise<void>;
-  calculateTotal: () => { subtotal: number; discount: number; total: number };
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -109,21 +108,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const totalItems = items.reduce((total, item) => total + item.quantity, 0);
 
-  const calculateTotal = () => {
-    const subtotal = items.reduce((total, item) => total + (item.product.price * item.quantity), 0);
-    
-    // Apply quiz discount if available
-    const quizDiscount = localStorage.getItem('quizDiscount');
-    const discountPercentage = quizDiscount ? parseInt(quizDiscount) : 0;
-    const discountAmount = (subtotal * discountPercentage) / 100;
-    
-    return {
-      subtotal,
-      discount: discountAmount,
-      total: subtotal - discountAmount
-    };
-  };
-
   return (
     <CartContext.Provider
       value={{
@@ -135,7 +119,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         updateQuantity,
         removeItem,
         clearCart,
-        calculateTotal
       }}
     >
       {children}
